@@ -1,0 +1,8 @@
+this:
+  is:
+    - sample
+    - yaml
+    - file
+  and:
+    this-line: must be EDITED
+    and-this: should be EDITED as well
