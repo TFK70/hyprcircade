@@ -1,12 +1,45 @@
 package switcher
 
 import (
+	"fmt"
+
 	"github.com/tfk70/hyprcircade/internal/commands"
 	"github.com/tfk70/hyprcircade/internal/config"
 	"github.com/tfk70/hyprcircade/internal/files"
+	"github.com/tfk70/hyprcircade/internal/logging"
+	"github.com/tfk70/hyprcircade/internal/time"
 )
 
+func SwitchByTod(tod string, cfgFiles []*config.File, cfgCommands []*config.Command, cfgAnchor string) error {
+	logger, err := logging.GetNamedLogger("switcher.go")
+	if err != nil {
+		return err
+	}
+
+	logger.Infof("Setting theme based on time of day: %s", tod)
+
+	if tod == time.LIGHT {
+		SwitchToLight(cfgFiles, cfgCommands, cfgAnchor)
+		return nil
+	}
+
+	if tod == time.DARK {
+		SwitchToDark(cfgFiles, cfgCommands, cfgAnchor)
+		return nil
+	}
+
+	return fmt.Errorf("Undefined time of day: %s", tod)
+}
+
 func SwitchToLight(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAnchor string) error {
+	logger, err := logging.GetNamedLogger("switcher.go")
+	if err != nil {
+		return err
+	}
+
+	lightLogger := logger.WithField("theme", "light")
+	lightLogger.Info("Switching theme")
+
 	for _, file := range cfgFiles {
 		var anchor string
 
@@ -29,10 +62,20 @@ func SwitchToLight(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAn
 		}
 	}
 
+	lightLogger.Info("Theme switched successfully")
+
 	return nil
 }
 
 func SwitchToDark(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAnchor string) error {
+	logger, err := logging.GetNamedLogger("switcher.go")
+	if err != nil {
+		return err
+	}
+
+	darkLogger := logger.WithField("theme", "dark")
+	darkLogger.Info("Switching theme")
+
 	for _, file := range cfgFiles {
 		var anchor string
 
@@ -54,6 +97,8 @@ func SwitchToDark(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAnc
 			}
 		}
 	}
+
+	darkLogger.Info("Theme switched successfully")
 
 	return nil
 }

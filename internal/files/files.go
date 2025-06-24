@@ -6,21 +6,21 @@ import (
 	"os"
 	"strings"
 
-	"github.com/tfk70/hyprcircade/internal/logging"
 	"github.com/sirupsen/logrus"
+	"github.com/tfk70/hyprcircade/internal/logging"
 )
 
 func ReplaceInFile(filepath string, oldValue string, newValue string, anchor string) error {
-	logger, err := logging.GetLogger()
+	logger, err := logging.GetNamedLogger("files.go")
 	if err != nil {
 		return err
 	}
 
 	fileLogger := logger.WithFields(logrus.Fields{
-		"path": filepath,
+		"path":     filepath,
 		"oldValue": oldValue,
 		"newValue": newValue,
-		"anchor": anchor,
+		"anchor":   anchor,
 	})
 
 	fileLogger.Info("Performing replacement")

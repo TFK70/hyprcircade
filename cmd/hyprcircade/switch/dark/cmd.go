@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/tfk70/hyprcircade/internal/config"
-	"github.com/tfk70/hyprcircade/pkg/switcher"
 	"github.com/tfk70/hyprcircade/internal/logging"
+	"github.com/tfk70/hyprcircade/pkg/switcher"
 
-	"github.com/urfave/cli/v3"
 	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v3"
 )
 
 var (

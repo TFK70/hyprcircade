@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/tfk70/hyprcircade/internal/logging"
 	"github.com/sirupsen/logrus"
+	"github.com/tfk70/hyprcircade/internal/logging"
 )
 
 const (
@@ -13,7 +13,7 @@ const (
 )
 
 func ExecuteCommand(cmd string) error {
-	logger, err := logging.GetLogger()
+	logger, err := logging.GetNamedLogger("commands.go")
 	if err != nil {
 		return err
 	}

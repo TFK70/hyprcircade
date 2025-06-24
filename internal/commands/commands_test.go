@@ -2,9 +2,13 @@ package commands
 
 import (
 	"testing"
+
+	"github.com/tfk70/hyprcircade/internal/logging"
 )
 
 func TestExecuteCommand(t *testing.T) {
+	logging.SetupLogger()
+
 	cmd := "echo 10"
 	err := ExecuteCommand(cmd)
 	if err != nil {

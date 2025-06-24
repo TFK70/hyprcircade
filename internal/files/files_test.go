@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/tfk70/hyprcircade/internal/logging"
 )
 
 func copyDir(src string, dst string) error {
@@ -51,6 +52,8 @@ func copyFile(srcFile, dstFile string, perm os.FileMode) error {
 }
 
 func TestReplaceInFile(t *testing.T) {
+	logging.SetupLogger()
+
 	testDataSrc := "./testdata/before-replace"
 	testDataDst := "./testdata/_temp"
 	testDataAfterReplace := "./testdata/after-replace"

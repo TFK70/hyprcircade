@@ -2,6 +2,7 @@ package logging
 
 import (
 	"fmt"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,4 +24,18 @@ func GetLogger() (*logrus.Logger, error) {
 	}
 
 	return logger, nil
+}
+
+func GetNamedLogger(name string) (*logrus.Entry, error) {
+	if name == "" {
+		return nil, fmt.Errorf("Name for logger was not provided")
+	}
+
+	if logger == nil {
+		return nil, fmt.Errorf("Logger not found")
+	}
+
+	namedLogger := logger.WithField("logger", name)
+
+	return namedLogger, nil
 }

@@ -18,6 +18,16 @@ func RunEveryMinute(cmd func()) error {
 	return nil
 }
 
+func RunEveryNthHour(n int, cmd func()) error {
+	if cronInstance == nil {
+		cronInstance = c.New()
+	}
+
+	cronInstance.AddFunc(fmt.Sprintf("0 %d * * *", n), cmd)
+
+	return nil
+}
+
 func Start() error {
 	if cronInstance == nil {
 		return fmt.Errorf("Failed to start cron: cronInstance was not initialized")

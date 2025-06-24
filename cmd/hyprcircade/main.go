@@ -10,10 +10,12 @@ import (
 	switchCmd "github.com/tfk70/hyprcircade/cmd/hyprcircade/switch"
 	"github.com/tfk70/hyprcircade/internal/config"
 	"github.com/tfk70/hyprcircade/internal/logging"
+	"github.com/tfk70/hyprcircade/internal/time"
 	"github.com/tfk70/hyprcircade/pkg/daemon"
+	"github.com/tfk70/hyprcircade/pkg/switcher"
 
-	"github.com/urfave/cli/v3"
 	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v3"
 )
 
 func main() {
@@ -36,6 +38,13 @@ func main() {
 				Usage:   "Enable debug logging",
 				Sources: cli.EnvVars("HYPRCIRCADE_DEBUG"),
 			},
+			&cli.BoolFlag{
+				Name:    "apply-on-start",
+				Value:   true,
+				Usage:   "Apply theme based on time of day on daemon startup",
+				Local:   true,
+				Sources: cli.EnvVars("HYPRCIRCADE_APPLY_ON_START"),
+			},
 		},
 		Commands: []*cli.Command{
 			switchCmd.SwitchCommand,
@@ -46,20 +55,24 @@ func main() {
 	logger := logging.SetupLogger()
 
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
-		logger.Errorf("Error during execution: %v", err)	
+		logger.Errorf("Error during execution: %v", err)
 		os.Exit(1)
 	}
 }
 
 func run(context context.Context, cmd *cli.Command) error {
-	logger, err := logging.GetLogger()
+	rootLogger, err := logging.GetLogger()
 	if err != nil {
 		return err
 	}
 
 	if cmd.Bool("debug") {
-		logger.SetLevel(logrus.DebugLevel)
-		logger.Debug("Debug logging set")
+		rootLogger.SetLevel(logrus.DebugLevel)
+	}
+
+	logger, err := logging.GetNamedLogger("main.go")
+	if err != nil {
+		return err
 	}
 
 	configPath := cmd.String("config")
@@ -69,15 +82,22 @@ func run(context context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	logger.WithFields(logrus.Fields{
-		"darkAt": cfg.General.DarkAt,
-		"lightAt": cfg.General.LightAt,
-	}).Info("Hyprcircade daemon started")
-
 	errch := make(chan error)
 	defer close(errch)
 
 	err = daemon.StartDaemon(cfg.General.DarkAt, cfg.General.LightAt, cfg.Files, cfg.Commands, cfg.General.Anchor)
+	if err != nil {
+		return err
+	}
+
+	if cmd.Bool("apply-on-start") {
+		logger.Info("apply-on-start flag set, applying theme based on time of day")
+		tod, err := time.GetCurrentTimeOfTheDay(cfg.General.DarkAt, cfg.General.LightAt)
+		if err != nil {
+			return err
+		}
+		switcher.SwitchByTod(tod, cfg.Files, cfg.Commands, cfg.General.Anchor)
+	}
 
 	return <-errch
 }
