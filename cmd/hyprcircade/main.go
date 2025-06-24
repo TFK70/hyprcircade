@@ -69,6 +69,11 @@ func run(context context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	logger.WithFields(logrus.Fields{
+		"darkAt": cfg.General.DarkAt,
+		"lightAt": cfg.General.LightAt,
+	}).Info("Hyprcircade daemon started")
+
 	errch := make(chan error)
 	defer close(errch)
 
