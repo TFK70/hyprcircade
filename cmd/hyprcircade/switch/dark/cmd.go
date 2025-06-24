@@ -5,7 +5,10 @@ import (
 
 	"github.com/tfk70/hyprcircade/internal/config"
 	"github.com/tfk70/hyprcircade/pkg/switcher"
+	"github.com/tfk70/hyprcircade/internal/logging"
+
 	"github.com/urfave/cli/v3"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -18,6 +21,16 @@ var (
 )
 
 func run(context context.Context, cmd *cli.Command) error {
+	logger, err := logging.GetLogger()
+	if err != nil {
+		return err
+	}
+
+	if cmd.Bool("debug") {
+		logger.SetLevel(logrus.DebugLevel)
+		logger.Debug("Debug logging set")
+	}
+
 	configPath := cmd.String("config")
 
 	cfg, err := config.NewConfig(configPath)

@@ -5,9 +5,26 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/tfk70/hyprcircade/internal/logging"
+	"github.com/sirupsen/logrus"
 )
 
 func ReplaceInFile(filepath string, oldValue string, newValue string, anchor string) error {
+	logger, err := logging.GetLogger()
+	if err != nil {
+		return err
+	}
+
+	fileLogger := logger.WithFields(logrus.Fields{
+		"path": filepath,
+		"oldValue": oldValue,
+		"newValue": newValue,
+		"anchor": anchor,
+	})
+
+	fileLogger.Info("Performing replacement")
+
 	file, err := os.Open(filepath)
 	if err != nil {
 		return err
@@ -46,6 +63,8 @@ func ReplaceInFile(filepath string, oldValue string, newValue string, anchor str
 		fmt.Fprintln(writer, line)
 	}
 	writer.Flush()
+
+	fileLogger.Info("Successfully replaced")
 
 	return nil
 }
