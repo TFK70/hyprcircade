@@ -1,3 +1,175 @@
 # Hyprcircade
 
-TBD
+Daemon that manages dark/light theme switching for system
+
+## How it works
+
+You specify time when you want to switch your dark or light theme, files that you want to modify when theme switches (e.g. configuration files where you want to switch between dark/light modes) and commands that need to be executed when theme switches (e.g. send notification about theme switching or trigger applications to reload its configuration)
+
+## Usage
+
+Create `hyprcircade.conf` in `$HOME/.config/hypr` directory:
+
+```hyprlang
+general {
+  anchor = THEME_SWITCHER_TARGET # hyprcircade will search for this anchor in files for strings replacement
+
+  # 24-hours format specification
+  dark-at = 20 # switch to dark theme at 20 o'clock (8 P.M.)
+  light-at = 8 # switch to light theme at 8 o'clock (8 A.M.)
+}
+
+file {
+  path = ./configuration.yaml # path to configuration file that needs to be modified
+  day-value = light # value that needs to be placed when theme is light
+  night-value = dark # value that needs to be placed when theme is dark
+  ignore-anchor = false # if you don't want (or can't) specify anchors in configuration file - you can ignore them
+}
+
+file { # several files can be specified
+  path = ./somefile2.yaml
+  day-value = light2
+  night-value = dark2
+  ignore-anchor = true
+}
+
+command {
+  day-exec = notify-send -t 3000 "Switching theme to light" # command that will be executed when light theme is applied
+}
+
+
+command {
+  day-exec = another command # several commands can be specified
+}
+
+command {
+  night-exec = notify-send -t 3000 "Switching theme to dark" # command that will be executed when dark theme is applied
+}
+```
+
+If we have `configuration.yaml` like this:
+
+```yaml
+configuration:
+    theme: light # THEME_SWITCHER_TARGET
+    name: lightning mcqueen
+```
+
+When dark theme is applied hyprcircade will update this file like this: (if ignore-anchor is false)
+
+```yaml
+configuration:
+    theme: dark # THEME_SWITCHER_TARGET
+    name: lightning mcqueen # line has substring 'light' but it won't be modified because this line has no anchor
+```
+
+If ignore-anchor was set to true then the result will be:
+
+```yaml
+configuration:
+    theme: dark # THEME_SWITCHER_TARGET - anchor will be ignored
+    name: darkning mcqueen # was modified
+```
+
+## Real example
+
+```hyprlang
+general {
+  anchor = THEME_SWITCHER_TARGET
+
+  dark-at = 20
+  light-at = 8
+}
+
+# Set palette for wallust form dark to light
+file {
+  path = /home/user/.config/wallust/wallust.toml
+  day-value = softlight
+  night-value = dark
+  ignore-anchor = false
+}
+
+# Set background for my terminal
+file {
+  path = /home/user/.config/alacritty/alacritty.toml
+  day-value = 0xffffff
+  night-value = 0x000000
+  ignore-anchor = false
+}
+
+# Set colors for my rofi theme
+file {
+  path = /home/user/.config/rofi/themes/custom/launcher.rasi
+  day-value = white
+  night-value = black
+  ignore-anchor = false
+}
+
+# Update taskwarrior theme
+file {
+  path = /home/user/.taskrc
+  day-value = light-256
+  night-value = dark-blue-256
+  ignore-anchor = false
+}
+
+# Update neovim colorscheme (I use plugin to read colorscheme from this file and update it in real time)
+file {
+  path = /home/user/.config/nvim/colorscheme/current_colorscheme
+  day-value = github_light
+  night-value = tokyonight-moon
+  ignore-anchor = true
+}
+
+# Send notification about theme switching
+command {
+  day-exec = notify-send -t 3000 "Switching theme to light"
+}
+
+# Execute script that updates my wallpaper, regenerates wallust theme and reloads waybar, swaync, etc.
+command {
+  day-exec = /home/user/.config/hypr/compositions/wallpaper.sh day-wallpaper.png
+}
+
+# Set system-wide color scheme to light so applications like Google Chrome (and websites) could synchronize its theme with OS
+command {
+  day-exec = gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+}
+
+# Set GTK theme
+command {
+  day-exec = gsettings set org.gnome.desktop.interface gtk-theme 'Flat-Remix-GTK-Blue-Light'
+}
+
+## Following commands do the same for dark theme
+
+command {
+  night-exec = notify-send -t 3000 "Switching theme to dark"
+}
+
+command {
+  night-exec = /home/user/.config/hypr/compositions/wallpaper.sh night-wallpaper.png
+}
+
+command {
+  night-exec = gsettings set org.gnome.desktop.interface gtk-theme 'Flat-Remix-GTK-Blue-Dark'
+}
+
+command {
+  night-exec = gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+}
+
+```
+
+## Relation to hyprland
+
+Tool was called **hypr**circade because you use hyprlang for hyprcircade configuration file. However, I plan to add support for yaml configuration file for people who want to use this tool in setups without hyprland (because hyprland is not required).
+
+## Known issues and limitations
+
+- No modules or variables support (like in hyprland configuration file)
+    - The reason is that there is not official hyprlang parser for golang
+
+## Todo
+
+- [ ] Implement yaml configuration file as an alternative
