@@ -8,7 +8,7 @@ You specify time when you want to switch your dark or light theme, files that yo
 
 ## Usage
 
-Create `hyprcircade.conf` in `$HOME/.config/hypr` directory:
+1. Create `hyprcircade.conf` in `$HOME/.config/hypr` directory:
 
 ```hyprlang
 general {
@@ -71,6 +71,52 @@ configuration:
     name: darkning mcqueen # was modified
 ```
 
+2. Start `hyprcircade` daemon
+
+```bash
+hyprcircade
+```
+
+This will also apply theme based on your current time of day. If you want to omit this functionality just do:
+
+```bash
+hyprcircade --apply-on-start=false
+```
+
+You can also trigger theme switching manually
+
+```bash
+hyprcircade switch light
+hyprcircade switch dark
+```
+
+## CLI Reference
+
+```bash
+NAME:
+   hyprcircade - Dark/light theme manager for hyprland
+
+USAGE:
+   hyprcircade [global options] [command [command options]]
+
+VERSION:
+   v0.0.1
+
+COMMANDS:
+   switch
+   help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --config string, -c string  Path to hyprcircade configuration file (default: "/home/darius/.config/hypr/hyprcircade.conf") [$HYPRCIRCADE_CONFIGURATION_FILE]
+   --debug                     Enable debug logging (default: false) [$HYPRCIRCADE_DEBUG]
+   --apply-on-start            Apply theme based on time of day on daemon startup (default: true) [$HYPRCIRCADE_APPLY_ON_START]
+   --help, -h                  show help
+   --version, -v               print the version
+
+COPYRIGHT:
+   (c) 2025 TFK70
+```
+
 ## Real example
 
 ```hyprlang
@@ -89,7 +135,7 @@ file {
   ignore-anchor = false
 }
 
-# Set background for my terminal
+# Set background for terminal
 file {
   path = /home/user/.config/alacritty/alacritty.toml
   day-value = 0xffffff
@@ -97,7 +143,7 @@ file {
   ignore-anchor = false
 }
 
-# Set colors for my rofi theme
+# Set colors for rofi theme
 file {
   path = /home/user/.config/rofi/themes/custom/launcher.rasi
   day-value = white
@@ -126,7 +172,7 @@ command {
   day-exec = notify-send -t 3000 "Switching theme to light"
 }
 
-# Execute script that updates my wallpaper, regenerates wallust theme and reloads waybar, swaync, etc.
+# Execute script that updates wallpaper, regenerates wallust theme and reloads waybar, swaync, etc.
 command {
   day-exec = /home/user/.config/hypr/compositions/wallpaper.sh day-wallpaper.png
 }
@@ -163,7 +209,7 @@ command {
 
 ## Relation to hyprland
 
-Tool was called **hypr**circade because you use hyprlang for hyprcircade configuration file. However, I plan to add support for yaml configuration file for people who want to use this tool in setups without hyprland (because hyprland is not required).
+Tool was called **hypr**circade because you use hyprlang for hyprcircade configuration. However, I plan to add support for yaml configuration file for people who want to use this tool in setups without hyprland (because hyprland is not required).
 
 ## Known issues and limitations
 
