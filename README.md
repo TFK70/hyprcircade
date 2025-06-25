@@ -6,6 +6,12 @@ Daemon that manages dark/light theme switching for system
 
 You specify time when you want to switch your dark or light theme, files that you want to modify when theme switches (e.g. configuration files where you want to switch between dark/light modes) and commands that need to be executed when theme switches (e.g. send notification about theme switching or trigger applications to reload its configuration)
 
+## Installation
+
+```bash
+go install github.com/tfk70/hyprcircade/cmd/hyprcircade@v0.0.6
+```
+
 ## Usage
 
 1. Create `hyprcircade.conf` in `$HOME/.config/hypr` directory:
@@ -77,7 +83,7 @@ configuration:
 hyprcircade
 ```
 
-This will also apply theme based on your current time of day. If you want to omit this functionality just do:
+This will start daemon in foreground mode and also apply theme based on your current time of day. If you want to omit this functionality just do:
 
 ```bash
 hyprcircade --apply-on-start=false
@@ -88,6 +94,62 @@ You can also trigger theme switching manually
 ```bash
 hyprcircade switch light
 hyprcircade switch dark
+```
+
+## Starting in background
+
+### Hyprland
+
+Recommended option is to start hyprcircade using hyprland's `exec-one` option:
+
+```hyprlang
+exec-once = hyprcircade &
+```
+
+### From current session
+
+However, if you want to start hyprcircade from already running hyprland session you can do:
+
+```bash
+hyprcircade &
+disown %1
+```
+
+This will start hyprcircade daemon in background and detach it from current session. However, this will print stdout logs to you current terminal session and it is recommended to restart the session after launching hyprcircade this way
+
+You can also use `nohup` to redirect stdout logs to a file:
+
+```bash
+nohup hyprcircade &
+disown %1
+```
+
+### Systemd
+
+If you want more control over your daemons you can launch hyprircade as a systemd service. Create `.config/systemd/hyprcircade.service` file:
+
+```toml
+[Unit]
+Description=Hyprcircade dark/light theme switching daemon
+
+[Service]
+Type=simple
+ExecStart=/home/user/go/bin/hyprcircade # Path to hyprcircade binary
+
+[Install]
+WantedBy=graphical-session.target # We want to start our daemon after graphical session was initialized
+```
+
+Now enable it:
+
+```bash
+systemctl --user enable --now hyprcircade.service
+```
+
+And view it's status:
+
+```bash
+systemctl --user status hyprcircade.service
 ```
 
 ## CLI Reference
