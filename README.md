@@ -15,8 +15,8 @@ general {
   anchor = THEME_SWITCHER_TARGET # hyprcircade will search for this anchor in files for strings replacement
 
   # 24-hours format specification
-  dark-at = 20 # switch to dark theme at 20 o'clock (8 P.M.)
-  light-at = 8 # switch to light theme at 8 o'clock (8 A.M.)
+  dark-at = 20 # switch to dark theme at 20:00 (8 P.M.)
+  light-at = 8 # switch to light theme at 8:00 (8 A.M.)
 }
 
 file {

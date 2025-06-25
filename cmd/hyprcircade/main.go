@@ -22,7 +22,7 @@ func main() {
 	cmd := &cli.Command{
 		Name:      "hyprcircade",
 		Usage:     "Dark/light theme manager for hyprland",
-		Version:   "v0.0.1",
+		Version:   "v0.0.6",
 		Copyright: fmt.Sprintf("(c) %d TFK70", t.Now().Year()),
 		Flags: []cli.Flag{
 			&cli.StringFlag{
