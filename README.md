@@ -128,7 +128,7 @@ disown %1
 
 If you want more control over your daemons you can launch hyprircade as a systemd service. Create `.config/systemd/hyprcircade.service` file:
 
-```toml
+```service
 [Unit]
 Description=Hyprcircade dark/light theme switching daemon
 
