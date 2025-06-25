@@ -4,7 +4,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/tfk70/hyprcircade/internal/config"
 	"github.com/tfk70/hyprcircade/internal/cron"
+	"github.com/tfk70/hyprcircade/internal/dbus"
 	"github.com/tfk70/hyprcircade/internal/logging"
+	"github.com/tfk70/hyprcircade/internal/time"
 	"github.com/tfk70/hyprcircade/pkg/switcher"
 )
 
@@ -32,6 +34,25 @@ func StartDaemon(darkAt int, lightAt int, cfgFiles []*config.File, cfgCommands [
 	}
 
 	err = cron.Start()
+	if err != nil {
+		return err
+	}
+
+	awaken := func() {
+		goroutineLogger := logger.WithField("goroutine", "true")
+
+		tod, err := time.GetCurrentTimeOfTheDay(darkAt, lightAt)
+		if err != nil {
+			goroutineLogger.Errorf("Error getting current time of day: %v", err)
+		}
+
+		err = switcher.SwitchByTod(tod, cfgFiles, cfgCommands, cfgAnchor)
+		if err != nil {
+			goroutineLogger.Errorf("Error switching theme by time of day: %v", err)
+		}
+	}
+
+	err = dbus.RunOnAwake(awaken)
 	if err != nil {
 		return err
 	}
