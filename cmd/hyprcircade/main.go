@@ -55,7 +55,12 @@ func main() {
 	logger := logging.SetupLogger()
 
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
-		logger.Errorf("Error during execution: %v", err)
+		if logging.IsNullified {
+			fmt.Println(fmt.Errorf("Error during execution: %v", err))
+		} else {
+			logger.Errorf("Error during execution: %v", err)
+		}
+
 		os.Exit(1)
 	}
 }

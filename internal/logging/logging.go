@@ -7,7 +7,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var logger *logrus.Logger
+var (
+	logger *logrus.Logger
+	IsNullified = false
+)
 
 func SetupLogger() *logrus.Logger {
 	if logger != nil {
@@ -25,6 +28,7 @@ func NullifyLogger() error {
 	}
 
 	logger.SetOutput(io.Discard)
+	IsNullified = true
 
 	return nil
 }
