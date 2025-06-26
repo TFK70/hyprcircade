@@ -83,10 +83,16 @@ configuration:
 hyprcircade
 ```
 
-This will start daemon in foreground mode and also apply theme based on your current time of day. If you want to omit this functionality just do:
+This will start daemon in background mode and also apply theme based on your current time of day. If you want to omit this functionality just do:
 
 ```bash
 hyprcircade --apply-on-start=false
+```
+
+Hyprcircade can also be started in foreground mode:
+
+```bash
+hyprcircade --foreground
 ```
 
 You can also trigger theme switching manually
@@ -103,54 +109,18 @@ hyprcircade switch dark
 Recommended option is to start hyprcircade using hyprland's `exec-one` option:
 
 ```hyprlang
-exec-once = hyprcircade &
+exec-once = hyprcircade
 ```
 
 ### From current session
 
-However, if you want to start hyprcircade from already running hyprland session you can do:
+If you want to start hyprcircade from already running hyprland session you can do:
 
 ```bash
-hyprcircade &
-disown %1
+hyprcircade
 ```
 
-This will start hyprcircade daemon in background and detach it from current session. However, this will print stdout logs to your current terminal session and it is recommended to restart the session after launching hyprcircade this way
-
-You can also use `nohup` to redirect stdout logs to a file:
-
-```bash
-nohup hyprcircade &
-disown %1
-```
-
-### Systemd
-
-If you want more control over your daemons you can launch hyprircade as a systemd service. Create `.config/systemd/hyprcircade.service` file:
-
-```service
-[Unit]
-Description=Hyprcircade dark/light theme switching daemon
-
-[Service]
-Type=simple
-ExecStart=/home/user/go/bin/hyprcircade # Path to hyprcircade binary
-
-[Install]
-WantedBy=graphical-session.target # We want to start our daemon after graphical session was initialized
-```
-
-Now enable it:
-
-```bash
-systemctl --user enable --now hyprcircade.service
-```
-
-And view it's status:
-
-```bash
-systemctl --user status hyprcircade.service
-```
+This will start hyprcircade daemon in background mode. You won't be able to start several hyprcircade instances at the same time.
 
 ## CLI Reference
 
@@ -162,16 +132,18 @@ USAGE:
    hyprcircade [global options] [command [command options]]
 
 VERSION:
-   v0.0.1
+   v0.0.8
 
 COMMANDS:
    switch
+   stop     stop hyprcircade daemon (if it is running in background mode)
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --config string, -c string  Path to hyprcircade configuration file (default: "/home/darius/.config/hypr/hyprcircade.conf") [$HYPRCIRCADE_CONFIGURATION_FILE]
    --debug                     Enable debug logging (default: false) [$HYPRCIRCADE_DEBUG]
    --apply-on-start            Apply theme based on time of day on daemon startup (default: true) [$HYPRCIRCADE_APPLY_ON_START]
+   --foreground                Run in the foreground mode (default: false) [$HYPRCIRCADE_DAEMONIZE]
    --help, -h                  show help
    --version, -v               print the version
 
