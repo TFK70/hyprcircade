@@ -115,7 +115,7 @@ hyprcircade &
 disown %1
 ```
 
-This will start hyprcircade daemon in background and detach it from current session. However, this will print stdout logs to you current terminal session and it is recommended to restart the session after launching hyprcircade this way
+This will start hyprcircade daemon in background and detach it from current session. However, this will print stdout logs to your current terminal session and it is recommended to restart the session after launching hyprcircade this way
 
 You can also use `nohup` to redirect stdout logs to a file:
 
@@ -276,7 +276,7 @@ Tool was called **hypr**circade because you use hyprlang for hyprcircade configu
 ## Known issues and limitations
 
 - No modules or variables support (like in hyprland configuration file)
-    - The reason is that there is not official hyprlang parser for golang
+    - The reason is that there is no official hyprlang parser for golang
 
 ## Todo
 
