@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	logger *logrus.Logger
+	logger      *logrus.Logger
 	IsNullified = false
 )
 

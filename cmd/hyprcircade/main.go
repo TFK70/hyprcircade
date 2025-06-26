@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 	t "time"
 
+	stopCmd "github.com/tfk70/hyprcircade/cmd/hyprcircade/stop"
 	switchCmd "github.com/tfk70/hyprcircade/cmd/hyprcircade/switch"
 	"github.com/tfk70/hyprcircade/internal/config"
 	"github.com/tfk70/hyprcircade/internal/logging"
@@ -14,15 +17,21 @@ import (
 	"github.com/tfk70/hyprcircade/pkg/daemon"
 	"github.com/tfk70/hyprcircade/pkg/switcher"
 
+	godaemon "github.com/sevlyar/go-daemon"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v3"
 )
 
+const (
+	BIN_NAME = "hyprcircade"
+	VERSION  = "v0.0.7"
+)
+
 func main() {
 	cmd := &cli.Command{
-		Name:      "hyprcircade",
+		Name:      BIN_NAME,
 		Usage:     "Dark/light theme manager for hyprland",
-		Version:   "v0.0.7",
+		Version:   VERSION,
 		Copyright: fmt.Sprintf("(c) %d TFK70", t.Now().Year()),
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -45,9 +54,17 @@ func main() {
 				Local:   true,
 				Sources: cli.EnvVars("HYPRCIRCADE_APPLY_ON_START"),
 			},
+			&cli.BoolFlag{
+				Name:    "foreground",
+				Value:   false,
+				Usage:   "Run in the foreground mode",
+				Local:   true,
+				Sources: cli.EnvVars("HYPRCIRCADE_DAEMONIZE"),
+			},
 		},
 		Commands: []*cli.Command{
 			switchCmd.SwitchCommand,
+			stopCmd.CreateStopCmd(BIN_NAME),
 		},
 		Action: run,
 	}
@@ -78,6 +95,43 @@ func run(context context.Context, cmd *cli.Command) error {
 	logger, err := logging.GetNamedLogger("main.go")
 	if err != nil {
 		return err
+	}
+
+	runInForeground := cmd.Bool("foreground")
+
+	if !runInForeground {
+		dc := &godaemon.Context{
+			PidFileName: fmt.Sprintf("/tmp/%s.pid", BIN_NAME),
+			PidFilePerm: 0644,
+			LogFileName: fmt.Sprintf("/tmp/%s.log", BIN_NAME),
+			LogFilePerm: 0640,
+		}
+
+		d, err := dc.Reborn()
+		if err != nil {
+			return err
+		}
+		if d != nil {
+			logger.Info("Daemon started")
+			return nil
+		}
+		defer func() {
+			logger.Info("Releasing")
+			err := dc.Release()
+			if err != nil {
+				logger.Errorf("Unable to release file: %v", err)
+			}
+		}()
+
+		sigs := make(chan os.Signal, 1)
+		signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+		go func() {
+			sig := <-sigs
+			logger.Infof("Received signal %s, shutting down...", sig)
+			dc.Release() // remove PID file
+			os.Exit(0)
+		}()
 	}
 
 	configPath := cmd.String("config")
