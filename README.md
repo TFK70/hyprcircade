@@ -106,7 +106,7 @@ hyprcircade switch dark
 
 ### Hyprland
 
-Recommended option is to start hyprcircade using hyprland's `exec-one` option:
+Recommended option is to start hyprcircade using hyprland's `exec-once` option:
 
 ```hyprlang
 exec-once = hyprcircade
@@ -140,7 +140,7 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --config string, -c string  Path to hyprcircade configuration file (default: "/home/darius/.config/hypr/hyprcircade.conf") [$HYPRCIRCADE_CONFIGURATION_FILE]
+   --config string, -c string  Path to hyprcircade configuration file (default: "$HOME/.config/hypr/hyprcircade.conf") [$HYPRCIRCADE_CONFIGURATION_FILE]
    --debug                     Enable debug logging (default: false) [$HYPRCIRCADE_DEBUG]
    --apply-on-start            Apply theme based on time of day on daemon startup (default: true) [$HYPRCIRCADE_APPLY_ON_START]
    --foreground                Run in the foreground mode (default: false) [$HYPRCIRCADE_DAEMONIZE]
