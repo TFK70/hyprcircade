@@ -9,6 +9,14 @@ import (
 var (
 	SwitchCommand = &cli.Command{
 		Name: "switch",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:    "disable-tui",
+				Value:   false,
+				Usage:   "Use standard logs instead tui",
+				Sources: cli.EnvVars("HYPRCIRCADE_DISABLE_TUI"),
+			},
+		},
 		Commands: []*cli.Command{
 			switchDark.SwitchDarkCommand,
 			switchLight.SwitchLightCommand,

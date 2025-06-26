@@ -2,6 +2,7 @@ package logging
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/sirupsen/logrus"
 )
@@ -16,6 +17,16 @@ func SetupLogger() *logrus.Logger {
 	logger = logrus.New()
 
 	return logger
+}
+
+func NullifyLogger() error {
+	if logger == nil {
+		return fmt.Errorf("No logger to nullify")
+	}
+
+	logger.SetOutput(io.Discard)
+
+	return nil
 }
 
 func GetLogger() (*logrus.Logger, error) {

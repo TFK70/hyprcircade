@@ -21,6 +21,11 @@ var (
 )
 
 func run(context context.Context, cmd *cli.Command) error {
+	tuiDisabled := cmd.Bool("disable-tui")
+	if !tuiDisabled {
+		logging.NullifyLogger()
+	}
+
 	logger, err := logging.GetLogger()
 	if err != nil {
 		return err
@@ -36,6 +41,19 @@ func run(context context.Context, cmd *cli.Command) error {
 	cfg, err := config.NewConfig(configPath)
 	if err != nil {
 		return err
+	}
+
+	if !tuiDisabled {
+		switcher.WithTui()
+	}
+
+	if !tuiDisabled {
+		err = switcher.SwitchToDarkWithTui(cfg.Files, cfg.Commands, cfg.General.Anchor)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	}
 
 	err = switcher.SwitchToDark(cfg.Files, cfg.Commands, cfg.General.Anchor)
