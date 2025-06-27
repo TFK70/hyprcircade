@@ -13,7 +13,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-func CreateStopCmd(bin string) *cli.Command {
+func CreateDaemonStopCmd(bin string) *cli.Command {
 	run := func(context context.Context, cmd *cli.Command) error {
 		logger, err := logging.GetLogger()
 		if err != nil {

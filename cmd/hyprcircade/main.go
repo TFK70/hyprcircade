@@ -9,7 +9,7 @@ import (
 	"syscall"
 	t "time"
 
-	stopCmd "github.com/tfk70/hyprcircade/cmd/hyprcircade/stop"
+	stopCmd "github.com/tfk70/hyprcircade/cmd/hyprcircade/daemon"
 	switchCmd "github.com/tfk70/hyprcircade/cmd/hyprcircade/switch"
 	"github.com/tfk70/hyprcircade/internal/config"
 	"github.com/tfk70/hyprcircade/internal/logging"
@@ -64,7 +64,7 @@ func main() {
 		},
 		Commands: []*cli.Command{
 			switchCmd.SwitchCommand,
-			stopCmd.CreateStopCmd(BIN_NAME),
+			stopCmd.CreateDaemonCmd(BIN_NAME),
 		},
 		Action: run,
 	}
