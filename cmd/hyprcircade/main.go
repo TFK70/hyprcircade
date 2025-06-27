@@ -24,7 +24,7 @@ import (
 
 const (
 	BIN_NAME = "hyprcircade"
-	VERSION  = "v0.0.9"
+	VERSION  = "v0.0.10"
 )
 
 func main() {
