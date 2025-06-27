@@ -29,10 +29,11 @@ const (
 
 func main() {
 	cmd := &cli.Command{
-		Name:      BIN_NAME,
-		Usage:     "Dark/light theme manager for hyprland",
-		Version:   VERSION,
-		Copyright: fmt.Sprintf("(c) %d TFK70", t.Now().Year()),
+		Name:                  BIN_NAME,
+		Usage:                 "Dark/light theme manager for hyprland",
+		Version:               VERSION,
+		Copyright:             fmt.Sprintf("(c) %d TFK70", t.Now().Year()),
+		EnableShellCompletion: true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "config",
