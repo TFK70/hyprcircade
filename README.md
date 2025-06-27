@@ -9,7 +9,7 @@ You specify time when you want to switch your dark or light theme, files that yo
 ## Installation
 
 ```bash
-go install github.com/tfk70/hyprcircade/cmd/hyprcircade@v0.0.8
+go install github.com/tfk70/hyprcircade/cmd/hyprcircade@v0.0.9
 ```
 
 ## Usage
