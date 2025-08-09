@@ -47,9 +47,9 @@ func SwitchToLightWithTui(cfgFiles []*config.File, cfgCommands []*config.Command
 	}
 
 	filesSteps := []tui.SwitchModelStepDto{}
-	for _, file := range cfgFiles {
+	for idx, file := range cfgFiles {
 		filesSteps = append(filesSteps, tui.SwitchModelStepDto{
-			Name:         file.Path,
+			Name:         fmt.Sprintf("%d-%s", idx+1, file.Path),
 			PendingMsg:   fmt.Sprintf("Processing file %s", file.Path),
 			CompletedMsg: fmt.Sprintf("Processed file %s", file.Path),
 		})
@@ -61,10 +61,10 @@ func SwitchToLightWithTui(cfgFiles []*config.File, cfgCommands []*config.Command
 
 	commandsSteps := []tui.SwitchModelStepDto{}
 
-	for _, cmd := range cfgCommands {
+	for idx, cmd := range cfgCommands {
 		if cmd.DayExec != "" {
 			commandsSteps = append(commandsSteps, tui.SwitchModelStepDto{
-				Name:         cmd.DayExec,
+				Name:         fmt.Sprintf("%d-%s", idx+1, cmd.DayExec),
 				PendingMsg:   fmt.Sprintf("Executing command %s", cmd.DayExec),
 				CompletedMsg: fmt.Sprintf("Executed command %s", cmd.DayExec),
 			})
@@ -103,9 +103,10 @@ func SwitchToLight(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAn
 	lightLogger := logger.WithField("theme", "light")
 	lightLogger.Info("Switching theme")
 
-	for _, file := range cfgFiles {
+	for idx, file := range cfgFiles {
+		stepId := fmt.Sprintf("%d-%s", idx+1, file.Path)
 		if withTui {
-			switchView.Pending(file.Path)
+			switchView.Pending(stepId)
 		}
 
 		var anchor string
@@ -120,14 +121,15 @@ func SwitchToLight(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAn
 		}
 
 		if withTui {
-			switchView.Proceed(file.Path)
+			switchView.Proceed(stepId)
 		}
 	}
 
-	for _, cmd := range cfgCommands {
+	for idx, cmd := range cfgCommands {
+		stepId := fmt.Sprintf("%d-%s", idx+1, cmd.DayExec)
 		if cmd.DayExec != "" {
 			if withTui {
-				switchView.Pending(cmd.DayExec)
+				switchView.Pending(stepId)
 			}
 
 			err := commands.ExecuteCommand(cmd.DayExec)
@@ -136,7 +138,7 @@ func SwitchToLight(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAn
 			}
 
 			if withTui {
-				switchView.Proceed(cmd.DayExec)
+				switchView.Proceed(stepId)
 			}
 		}
 	}
@@ -152,9 +154,9 @@ func SwitchToDarkWithTui(cfgFiles []*config.File, cfgCommands []*config.Command,
 	}
 
 	filesSteps := []tui.SwitchModelStepDto{}
-	for _, file := range cfgFiles {
+	for idx, file := range cfgFiles {
 		filesSteps = append(filesSteps, tui.SwitchModelStepDto{
-			Name:         file.Path,
+			Name:         fmt.Sprintf("%d-%s", idx+1, file.Path),
 			PendingMsg:   fmt.Sprintf("Processing file %s", file.Path),
 			CompletedMsg: fmt.Sprintf("Processed file %s", file.Path),
 		})
@@ -166,10 +168,10 @@ func SwitchToDarkWithTui(cfgFiles []*config.File, cfgCommands []*config.Command,
 
 	commandsSteps := []tui.SwitchModelStepDto{}
 
-	for _, cmd := range cfgCommands {
+	for idx, cmd := range cfgCommands {
 		if cmd.NightExec != "" {
 			commandsSteps = append(commandsSteps, tui.SwitchModelStepDto{
-				Name:         cmd.NightExec,
+				Name:         fmt.Sprintf("%d-%s", idx+1, cmd.NightExec),
 				PendingMsg:   fmt.Sprintf("Executing command %s", cmd.NightExec),
 				CompletedMsg: fmt.Sprintf("Executed command %s", cmd.NightExec),
 			})
@@ -208,9 +210,10 @@ func SwitchToDark(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAnc
 	darkLogger := logger.WithField("theme", "dark")
 	darkLogger.Info("Switching theme")
 
-	for _, file := range cfgFiles {
+	for idx, file := range cfgFiles {
+		stepId := fmt.Sprintf("%d-%s", idx+1, file.Path)
 		if withTui {
-			switchView.Pending(file.Path)
+			switchView.Pending(stepId)
 		}
 
 		var anchor string
@@ -225,14 +228,15 @@ func SwitchToDark(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAnc
 		}
 
 		if withTui {
-			switchView.Proceed(file.Path)
+			switchView.Proceed(stepId)
 		}
 	}
 
-	for _, cmd := range cfgCommands {
+	for idx, cmd := range cfgCommands {
+		stepId := fmt.Sprintf("%d-%s", idx+1, cmd.NightExec)
 		if cmd.NightExec != "" {
 			if withTui {
-				switchView.Pending(cmd.NightExec)
+				switchView.Pending(stepId)
 			}
 
 			err := commands.ExecuteCommand(cmd.NightExec)
@@ -241,7 +245,7 @@ func SwitchToDark(cfgFiles []*config.File, cfgCommands []*config.Command, cfgAnc
 			}
 
 			if withTui {
-				switchView.Proceed(cmd.NightExec)
+				switchView.Proceed(stepId)
 			}
 		}
 	}
